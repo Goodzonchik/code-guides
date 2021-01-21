@@ -46,3 +46,126 @@
 4. Логика будет отделена от представления. Позволит гораздо проще проводить редизайн.
 5. Возможности использовать OnPush-стратегию – для снижения количества перерисовок
 6.
+
+# Порядок полей в файле
+
+```ts
+/* различные импорты */
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+
+/* небольшие enum, interface, class, const и подобное, что не обязательно выносить в отдельный файл */
+enum mode {
+	create,
+	edit,
+	view
+}
+
+/* Подпись компонента, если есть возможность*/
+/** SOME_COMPONENT Название компонента, если оно есть в постановке */
+/** Также можно добавлять ссылку на постановку, если она одна */
+
+/* Декоратор компонента */
+/* Обязательно использовать selector, с ним легче вести отладку кода*/
+@Component({
+	selector: 'component-selector',
+    templateUrl: './some-component.component.html',
+    styleUrls: ['./some-component.component.scss'],
+    providers: [SomeService]
+})
+export class SbaAgreementCardComponent implements OnInit, OnDestroy {
+	/*Первыми идут ViewChild*/
+    @ViewChild('table', {static: false}) table: TableComponent;
+    @ViewChild('tableFilter', {static: false}) tableFilter: TableFilterComponent;
+
+	/* INPUT - параметры компонента*/
+	/* Сперва идут простые INPUT*/
+	@INPUT() organization: Organization;
+	...
+
+	/* Через строку отделены INPUT, которые имеют get и set*/
+	@INPUT() set viewMode(value: boolean) {
+        this.innerViewMode = this.accountTabViewMode = value;
+    }
+
+    get viewMode(): boolean {
+        return this.innerViewMode;
+    }
+
+	/* OUTPUT - параметры компонента*/
+	@Output() onChange: EventEmitter<someModel> = new EventEmitter<someModel>();
+    @Output() onValidation: EventEmitter<boolean> = new EventEmitter<boolean>();
+	...
+
+	/*Публичные поля компонента*/
+    title: string = 'Заголовок компонента';
+    showErrors = false;
+    hasChanges = false;
+    ...
+
+	/*Публичные readonly поля компонента*/
+    readonly readonlyData = ReadonlyData;
+	...
+
+	/*Приватные поля компонента*/
+    private onDestroy$ = new Subject();
+    private dialogRef: DynamicDialogRef;
+	...
+
+    /*Приватные readonly поля компонента*/
+	private readonly someField: '';
+
+	/*Конструктор класса */
+    constructor(
+		/* сперва идут публичные аргументы*/
+        readonly someServiceService: SomeServiceService,
+		/* в конце идут приватные аргументы*/
+        private readonly preloaderService: PreloaderService
+    ) {}
+
+    /*getter-ы*/
+    get organizationNameControl(){
+        ...
+    }
+
+    /*setter-ы*/
+    set organizationNameControl(){
+        ...
+    }
+
+	/*ngOnInit и  ngAfterViewInit - первые публичные методы компонента, после конструктора*/
+    ngOnInit() {
+    ...
+    }
+
+    ngAfterViewInit() {
+    ...
+    }
+
+	/*Остальные публичные методы компонента*/
+
+	edit(){
+	...
+	}
+
+	save(){
+	...
+	}
+
+	/*Последними публичными методами идут ngOnDestroy и canDeactivated*/
+    ngOnDestroy(): void {
+    ...
+    }
+
+	/*Все protected поля*/
+    protected checkingValidation() {
+    ...
+    }
+
+	/*Все публичные поля*/
+    private checkingValidation() {
+    ...
+    }
+}
+
+```
