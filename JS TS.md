@@ -1,7 +1,5 @@
 # JS/TS
 
-Объявление переменных и правила именования:
-
 #### 1. Используйте `const` и `let` вместо `var`.
 
 **eslint: prefer-const, no-const-assign, no-var**
