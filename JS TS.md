@@ -1143,3 +1143,31 @@ export type TodoAny = any;
 
 const someModel: TodoAny;
 ```
+#### 91. При использовании `spread` или `Object.assing()` выносить обработку массивов за пределы присвоения.
+
+```ts
+// плохо
+const someObject = Object.assign(
+                    {},
+                    ...someArray.map((x) => {
+                        return {
+                            id: x.rootId,
+                            value: x.name,
+                            }
+                        };
+                    )
+                );
+
+// хорошо
+const someArrayData = someArray.map((item) => {
+                        return {
+                            id: item.rootId,
+                            value: item.name,
+                            }
+                        });
+
+const someObject = Object.assign(
+                    {},
+                    ...someArrayData
+                    });
+```
